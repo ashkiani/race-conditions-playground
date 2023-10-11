@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description"
+        content="Experience the impact of race conditions in a simulated banking environment. Play with delays, deposits, and withdrawals to see how they affect concurrent operations.">
+    <meta name="author" content="Siavash Ashkiani">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race Conditions Demo</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <!-- Add FontAwesome CSS link here -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Add Bootstrap CSS link here -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar navbar-light navbar-expand-md bg-faded justify-content-center  bg-info text-white my-2">
+                <div class="p-2 w-90">
+                    <h2>Race Conditions Playground</h2>
+                </div>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar3">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+    <div class="container mt-4">
+        <div class="row">
+            <h1>Race Conditions Demo</h1>
+            <p>Welcome to the <strong>Race Conditions Playground</strong>. Race conditions
+                occur when multiple operations happen concurrently and their final outcome depends on the order in which
+                they're executed. This interactive platform is designed for educational
+                purposes, allowing you to safely experiment how different delays and actions can lead to
+                unexpected results.
+                <mark>this webpage is purely a mockup and does not connect to any real database</mark>.
+            </p>
+            <h5>Enter values into the fields, and observe how the results change based on your input. If the results
+                seem incorrect, you can try the "Race Conditions Protection" toggle.</h5>
+        </div>
+        <div class="row mb-4">
+            <!-- top row showing Balance -->
+            <div class="col-8">
+
+            </div>
+            <div class="col-2">
+                <!-- fa-beat -->
+                <i class="fa-solid fa-file-invoice-dollar"> Balance</i>
+            </div>
+            <div class="col-2">
+                <!-- Amount Field (Accepts only valid $ amounts) -->
+                <input type="number" class="form-control" step="0.01" min="0.01" placeholder="$ Amount" required
+                    id="amnt">
+            </div>
+        </div>
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-2">
+                <i>Operator</i>
+            </div>
+            <div class="col-2">
+                <i>Amount</i>
+            </div>
+            <div class="col-2">
+                <i>Action</i>
+            </div>
+            <div class="col-2">
+                <i>Delay</i>
+            </div>
+            <div class="col-2">
+                <i>Progress</i>
+            </div>
+            <div class="col-2">
+                <i>Result</i>
+            </div>
+        </div>
+        <!-- Lane 1 -->
+        <div class="row mb-4">
+            <div class="col-2">
+                <!-- Clerk Image/Icon using FontAwesome -->
+                <i class="fas fa-user">Clerk 1</i>
+            </div>
+            <div class="col-2">
+                <!-- Amount Field (Accepts only valid $ amounts) -->
+                <input type="number" class="form-control" step="0.01" min="0.01" placeholder="$ Amount" required
+                    id="amnt1">
+            </div>
+            <div class="col-2">
+                <!-- Dropdown for Deposit/Withdraw -->
+                <select class="form-control" id="opr1">
+                    <option value="deposit">Deposit</option>
+                    <option value="withdraw">Withdraw</option>
+                </select>
+            </div>
+            <div class="col-2">
+                <!-- Dropdown for Delay Amount (Predefined values) -->
+                <select class="form-control" id="c1d">
+                    <option value="150">150ms</option>
+                    <option value="200">200ms</option>
+                    <option value="300">300ms</option>
+                </select>
+            </div>
+            <div class="col-2">
+                <!-- Progress -->
+                <div class="progress-bar" id="progress-bar1"></div>
+            </div>
+            <div class="col-2">
+                <p id="res1">-</p>
+            </div>
+        </div>
+        <!-- Horizontal Line -->
+        <hr>
+
+        <!-- Lane 2 (Identical to Lane 1) -->
+        <div class="row mb-4">
+            <div class="col-2">
+                <!-- Clerk Image/Icon using FontAwesome -->
+                <i class="fas fa-user">Clerk 2</i>
+            </div>
+            <div class="col-2">
+                <!-- Amount Field (Accepts only valid $ amounts) -->
+                <input type="number" class="form-control" step="0.01" min="0.01" placeholder="$ Amount" required
+                    id="amnt2">
+            </div>
+            <div class="col-2">
+                <!-- Dropdown for Deposit/Withdraw -->
+                <select class="form-control" id="opr2">
+                    <option value="deposit">Deposit</option>
+                    <option value="withdraw">Withdraw</option>
+                </select>
+            </div>
+            <div class="col-2">
+                <!-- Dropdown for Delay Amount (Predefined values) -->
+                <select class="form-control" id="c2d">
+                    <option value="100">100ms</option>
+                    <option value="500">500ms</option>
+                    <option value="2000">2s</option>
+                </select>
+            </div>
+            <div class="col-2">
+                <!-- Progress -->
+                <div class="progress-bar" id="progress-bar2"></div>
+            </div>
+            <div class="col-2">
+                <p id="res2">-</p>
+            </div>
+        </div>
+        <!-- Horizontal Line -->
+        <hr>
+
+        <!-- Lane 3 (Blank) -->
+        <div class="row mb-4">
+            <div class="col-2">
+                <!-- Button to Start Progress -->
+                <button class="btn btn-primary" id="start-button">Start Progress</button>
+            </div>
+            <div class="col-10">
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-10">
+                <!-- Button to protect against Race Condition -->
+                <div class="custom-control custom-switch">
+                    <!-- Input for the toggle switch -->
+                    <input type="checkbox" class="custom-control-input" id="rcPro">
+                    <!-- Label for the toggle switch -->
+                    <label class="custom-control-label" for="rcPro">Race Condition protection</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fixed-bottom bg-info text-white text-center">
+        <small>&copy; Copyright 2023, Siavash Ashkiani</small>
+    </div>
+    <script src="./script.js"></script>
+</body>
+
+</html>
